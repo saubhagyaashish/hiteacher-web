@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { Loader2, CheckCircle2, XCircle } from 'lucide-react'
@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 
-export default function VerifyPage() {
+function VerifyContent() {
     const router = useRouter()
     const searchParams = useSearchParams()
     const [isVerifying, setIsVerifying] = useState(true)
@@ -127,5 +127,24 @@ export default function VerifyPage() {
                 </CardFooter>
             </Card>
         </div>
+    )
+}
+
+export default function VerifyPage() {
+    return (
+        <Suspense fallback={
+            <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/5 via-background to-secondary/5 p-4">
+                <Card className="w-full max-w-md text-center">
+                    <CardHeader>
+                        <div className="mx-auto mb-4">
+                            <Loader2 className="h-16 w-16 text-primary animate-spin" />
+                        </div>
+                        <CardTitle className="text-2xl">Loading...</CardTitle>
+                    </CardHeader>
+                </Card>
+            </div>
+        }>
+            <VerifyContent />
+        </Suspense>
     )
 }
