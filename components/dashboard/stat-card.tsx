@@ -23,13 +23,15 @@ export function StatCard({
     iconColor = 'text-primary'
 }: StatCardProps) {
     return (
-        <Card className="hover:shadow-md transition-shadow">
+        <Card className="hover:shadow-lg transition-all border-l-4 border-l-primary">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">{title}</CardTitle>
-                <Icon className={cn("h-4 w-4", iconColor)} />
+                <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
+                    <Icon className={cn("h-5 w-5", iconColor)} />
+                </div>
             </CardHeader>
             <CardContent>
-                <div className="text-2xl font-bold">{value}</div>
+                <div className="text-2xl font-bold text-primary">{value}</div>
                 {description && (
                     <p className="text-xs text-muted-foreground mt-1">
                         {description}

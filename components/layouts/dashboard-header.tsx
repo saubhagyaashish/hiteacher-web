@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
+import { ThemeToggle } from '@/components/theme-toggle'
 import {
     Dialog,
     DialogContent,
@@ -61,6 +62,9 @@ export function DashboardHeader({ title, subtitle }: DashboardHeaderProps) {
                         />
                     </div>
                 </div>
+
+                {/* Theme Toggle */}
+                <ThemeToggle />
 
                 {/* Notifications */}
                 <Dialog>
