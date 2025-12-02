@@ -155,7 +155,7 @@ export function DashboardSidebar({ role, isCollapsed, onToggleCollapse }: Sideba
                 <div className="p-4 border-t">
                     <div className="text-xs text-muted-foreground space-y-1">
                         <p className="font-medium">Hi Teacher LMS</p>
-                        <p>v1.0.0 - Phase 4</p>
+                        <p>v1.0.0 - Phase 6</p>
                     </div>
                 </div>
             )}
