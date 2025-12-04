@@ -18,6 +18,7 @@ export const assignmentSchema = z.object({
     batchIds: z.array(z.string()).min(1, 'Select at least one batch'),
 
     attachments: z.array(z.object({
+        id: z.string(),
         fileName: z.string(),
         fileUrl: z.string(),
         fileSize: z.number(),

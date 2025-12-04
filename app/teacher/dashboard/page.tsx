@@ -1,8 +1,7 @@
-'use client'
-
 import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuthStore } from '@/store/auth-store'
+import { useAssignmentStore } from '@/store/assignment-store'
 import { DashboardLayout } from '@/components/layouts/dashboard-layout'
 import { StatCard } from '@/components/dashboard/stat-card'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -17,12 +16,16 @@ import {
     Upload,
     Clock,
     CheckCircle2,
-    AlertCircle
+    AlertCircle,
+    ClipboardList
 } from 'lucide-react'
+import Link from 'next/link'
+import { format } from 'date-fns'
 
 export default function TeacherDashboard() {
     const router = useRouter()
     const { user } = useAuthStore()
+    const { getStats, submissions } = useAssignmentStore()
 
     useEffect(() => {
         if (!user || user.role !== 'teacher') {
@@ -31,6 +34,12 @@ export default function TeacherDashboard() {
     }, [user, router])
 
     if (!user) return null
+
+    const assignmentStats = getStats()
+    const recentSubmissions = submissions
+        .filter(s => s.status === 'submitted' || s.status === 'graded')
+        .slice(0, 5)
+        .sort((a, b) => b.submittedAt.getTime() - a.submittedAt.getTime())
 
     const upcomingClasses = [
         {
@@ -59,17 +68,11 @@ export default function TeacherDashboard() {
         },
     ]
 
-    const recentSubmissions = [
-        { student: 'Alice Johnson', assignment: 'Physics Homework #5', time: '15 mins ago', status: 'pending' },
-        { student: 'Bob Williams', assignment: 'Math Quiz 3', time: '1 hour ago', status: 'pending' },
-        { student: 'Carol Davis', assignment: 'Chemistry Lab Report', time: '3 hours ago', status: 'graded' },
-    ]
-
     const quickActions = [
-        { label: 'Create Batch', icon: Users, color: 'bg-primary' },
-        { label: 'Upload Content', icon: Upload, color: 'bg-secondary' },
-        { label: 'Schedule Class', icon: Calendar, color: 'bg-accent' },
-        { label: 'New Assignment', icon: BookOpen, color: 'bg-primary' },
+        { label: 'Create Batch', icon: Users, color: 'bg-primary', href: '/teacher/batches/new' },
+        { label: 'Upload Content', icon: Upload, color: 'bg-secondary', href: '/teacher/content/new' },
+        { label: 'New Assignment', icon: ClipboardList, color: 'bg-accent', href: '/teacher/assignments/new' },
+        { label: 'Schedule Class', icon: Calendar, color: 'bg-primary', href: '/teacher/classes' },
     ]
 
     return (
@@ -84,24 +87,24 @@ export default function TeacherDashboard() {
                     iconColor="text-primary"
                 />
                 <StatCard
-                    title="Active Courses"
-                    value="3"
-                    description="12 topics total"
-                    icon={BookOpen}
+                    title="Active Assignments"
+                    value={assignmentStats.active.toString()}
+                    description={`${assignmentStats.total} total`}
+                    icon={ClipboardList}
                     iconColor="text-secondary"
                 />
                 <StatCard
-                    title="Classes This Week"
-                    value="8"
-                    description="2 today, 6 upcoming"
-                    icon={Calendar}
-                    iconColor="text-accent"
+                    title="Pending Reviews"
+                    value={assignmentStats.pendingReview.toString()}
+                    description="Awaiting grading"
+                    icon={Clock}
+                    iconColor="text-orange-600"
                 />
                 <StatCard
-                    title="Avg. Attendance"
-                    value="92%"
-                    trend={{ value: 5, isPositive: true }}
-                    description="Last 30 days"
+                    title="Avg. Grade"
+                    value={assignmentStats.averageGrade ? `${assignmentStats.averageGrade.toFixed(1)}%` : 'N/A'}
+                    trend={assignmentStats.passingRate ? { value: assignmentStats.passingRate, isPositive: true } : undefined}
+                    description={assignmentStats.passingRate ? `${assignmentStats.passingRate.toFixed(0)}% passing` : 'No data'}
                     icon={TrendingUp}
                     iconColor="text-primary"
                 />
@@ -118,16 +121,17 @@ export default function TeacherDashboard() {
                         {quickActions.map((action, index) => {
                             const Icon = action.icon
                             return (
-                                <Button
-                                    key={index}
-                                    variant="outline"
-                                    className="h-24 flex-col gap-2"
-                                >
-                                    <div className={`h-10 w-10 rounded-full ${action.color} flex items-center justify-center`}>
-                                        <Icon className="h-5 w-5 text-white" />
-                                    </div>
-                                    <span className="text-sm font-medium">{action.label}</span>
-                                </Button>
+                                <Link key={index} href={action.href}>
+                                    <Button
+                                        variant="outline"
+                                        className="h-24 w-full flex-col gap-2"
+                                    >
+                                        <div className={`h-10 w-10 rounded-full ${action.color} flex items-center justify-center`}>
+                                            <Icon className="h-5 w-5 text-white" />
+                                        </div>
+                                        <span className="text-sm font-medium">{action.label}</span>
+                                    </Button>
+                                </Link>
                             )
                         })}
                     </div>
@@ -177,36 +181,46 @@ export default function TeacherDashboard() {
                     <CardHeader>
                         <div className="flex items-center justify-between">
                             <CardTitle>Recent Submissions</CardTitle>
-                            <Badge variant="destructive">2 pending</Badge>
+                            {assignmentStats.pendingReview > 0 && (
+                                <Badge variant="destructive">{assignmentStats.pendingReview} pending</Badge>
+                            )}
                         </div>
                         <CardDescription>Latest assignment submissions</CardDescription>
                     </CardHeader>
                     <CardContent>
                         <div className="space-y-4">
-                            {recentSubmissions.map((submission, index) => (
-                                <div key={index} className="flex items-start gap-3">
-                                    <div className={`h-2 w-2 rounded-full mt-2 ${submission.status === 'pending' ? 'bg-destructive' : 'bg-secondary'}`} />
-                                    <div className="flex-1 space-y-1">
-                                        <p className="text-sm font-medium">{submission.student}</p>
-                                        <p className="text-xs text-muted-foreground">{submission.assignment}</p>
-                                        <p className="text-xs text-muted-foreground flex items-center gap-1">
-                                            <Clock className="h-3 w-3" />
-                                            {submission.time}
-                                        </p>
+                            {recentSubmissions.length === 0 ? (
+                                <p className="text-sm text-muted-foreground text-center py-8">No submissions yet</p>
+                            ) : (
+                                recentSubmissions.map((submission) => (
+                                    <div key={submission.id} className="flex items-start gap-3">
+                                        <div className={`h-2 w-2 rounded-full mt-2 ${submission.status === 'submitted' ? 'bg-orange-500' : 'bg-green-500'}`} />
+                                        <div className="flex-1 space-y-1">
+                                            <p className="text-sm font-medium">{submission.studentName}</p>
+                                            <p className="text-xs text-muted-foreground">Assignment ID: {submission.assignmentId}</p>
+                                            <p className="text-xs text-muted-foreground flex items-center gap-1">
+                                                <Clock className="h-3 w-3" />
+                                                {format(submission.submittedAt, 'PPp')}
+                                            </p>
+                                        </div>
+                                        {submission.status === 'submitted' ? (
+                                            <Link href={`/teacher/assignments/${submission.assignmentId}/submissions/${submission.id}`}>
+                                                <Button size="sm" variant="outline">
+                                                    Grade
+                                                </Button>
+                                            </Link>
+                                        ) : (
+                                            <CheckCircle2 className="h-5 w-5 text-green-500" />
+                                        )}
                                     </div>
-                                    {submission.status === 'pending' ? (
-                                        <Button size="sm" variant="outline">
-                                            Grade
-                                        </Button>
-                                    ) : (
-                                        <CheckCircle2 className="h-5 w-5 text-secondary" />
-                                    )}
-                                </div>
-                            ))}
+                                ))
+                            )}
                         </div>
-                        <Button variant="outline" className="w-full mt-4">
-                            View All Submissions
-                        </Button>
+                        <Link href="/teacher/assignments">
+                            <Button variant="outline" className="w-full mt-4">
+                                View All Assignments
+                            </Button>
+                        </Link>
                     </CardContent>
                 </Card>
             </div>
