@@ -16,10 +16,12 @@ import { ContentEditor } from '@/components/content/content-editor'
 import { DueDateCountdown } from '@/components/assignments/due-date-countdown'
 import { GradeDisplay } from '@/components/assignments/grade-display'
 import { SubmissionStatusBadge } from '@/components/assignments/submission-status-badge'
-import { Send, FileText, Upload, LinkIcon as Link2, ArrowLeft, CheckCircle2 } from 'lucide-react'
+import { Send, FileText, Upload, LinkIcon as Link2, ArrowLeft, CheckCircle2, BookOpen } from 'lucide-react'
 import Link from 'next/link'
 import { format, isPast } from 'date-fns'
 import { notFound } from 'next/navigation'
+import { useContentStore } from '@/store/content-store'
+import { LinkedContentCard } from '@/components/assignments/linked-content-card'
 
 // Mock student info
 const CURRENT_STUDENT = {
@@ -31,6 +33,7 @@ export default function StudentAssignmentPage({ params }: { params: Promise<{ id
     const router = useRouter()
     const { id } = use(params)
     const { getAssignmentById, getSubmissionsByStudent, addSubmission } = useAssignmentStore()
+    const { getContentById } = useContentStore()
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [selectedFile, setSelectedFile] = useState<File | null>(null)
 
@@ -208,6 +211,30 @@ export default function StudentAssignmentPage({ params }: { params: Promise<{ id
                             </TabsContent>
                         )}
                     </Tabs>
+
+                    {/* Linked Content */}
+                    {assignment.linkedContentIds && assignment.linkedContentIds.length > 0 && (
+                        <Card>
+                            <CardHeader>
+                                <CardTitle>Related Learning Materials</CardTitle>
+                                <CardDescription>
+                                    Review these materials before completing the assignment
+                                </CardDescription>
+                            </CardHeader>
+                            <CardContent className="space-y-2">
+                                {assignment.linkedContentIds.map(contentId => {
+                                    const content = getContentById(contentId)
+                                    if (!content) return null
+                                    return (
+                                        <LinkedContentCard
+                                            key={contentId}
+                                            content={content}
+                                        />
+                                    )
+                                })}
+                            </CardContent>
+                        </Card>
+                    )}
 
                     {/* Submission Form */}
                     {!mySubmission && canSubmit && (

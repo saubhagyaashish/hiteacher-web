@@ -24,6 +24,8 @@ export const assignmentSchema = z.object({
         fileSize: z.number(),
         fileType: z.string(),
     })).optional(),
+
+    linkedContentIds: z.array(z.string()).optional(),
 })
 
 export type AssignmentFormData = z.infer<typeof assignmentSchema>

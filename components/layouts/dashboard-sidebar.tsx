@@ -47,6 +47,7 @@ const teacherNavItems: NavItem[] = [
     { title: 'Dashboard', href: '/teacher/dashboard', icon: LayoutDashboard },
     { title: 'Batches', href: '/teacher/batches', icon: Users },
     { title: 'Students', href: '/teacher/students', icon: Users },
+    { title: 'Subjects', href: '/teacher/subjects', icon: FileText },
     { title: 'Content', href: '/teacher/content', icon: BookOpen },
     { title: 'Classes', href: '/teacher/classes', icon: Calendar },
     { title: 'Assignments', href: '/teacher/assignments', icon: ClipboardList },
@@ -57,7 +58,7 @@ const teacherNavItems: NavItem[] = [
 const studentNavItems: NavItem[] = [
     { title: 'Dashboard', href: '/student/dashboard', icon: LayoutDashboard },
     { title: 'My Classes', href: '/student/my-classes', icon: Calendar },
-    { title: 'Notes', href: '/student/notes', icon: BookOpen },
+    { title: 'Content', href: '/student/content', icon: BookOpen },
     { title: 'Assignments', href: '/student/assignments', icon: ClipboardList, badge: '3' },
     { title: 'Messages', href: '/student/messages', icon: MessageSquare },
     { title: 'Progress', href: '/student/progress', icon: BarChart3 },

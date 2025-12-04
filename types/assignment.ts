@@ -27,6 +27,9 @@ export interface Assignment {
     // Attachments (teacher provided)
     attachments?: AssignmentAttachment[]
 
+    // Linked learning content
+    linkedContentIds?: string[]
+
     // Metadata
     teacherId: string
     createdAt: Date

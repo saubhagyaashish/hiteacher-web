@@ -20,15 +20,21 @@ import {
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { ContentEditor } from '@/components/content/content-editor'
-import { Save, Send, ArrowLeft } from 'lucide-react'
+import { ContentSelector } from '@/components/assignments/content-selector'
+import { LinkedContentCard } from '@/components/assignments/linked-content-card'
+import { Save, Send, ArrowLeft, Plus, BookOpen } from 'lucide-react'
 import Link from 'next/link'
 import { useAuthStore } from '@/store/auth-store'
+import { useContentStore } from '@/store/content-store'
 
 export default function NewAssignmentPage() {
     const router = useRouter()
     const { user } = useAuthStore()
     const { addAssignment } = useAssignmentStore()
+    const { getContentById } = useContentStore()
     const [isSubmitting, setIsSubmitting] = useState(false)
+    const [selectedContentIds, setSelectedContentIds] = useState<string[]>([])
+    const [showContentSelector, setShowContentSelector] = useState(false)
 
     const {
         register,
@@ -69,6 +75,7 @@ export default function NewAssignmentPage() {
                 ...att,
                 id: `attachment-${Date.now()}-${Math.random()}`
             })),
+            linkedContentIds: selectedContentIds,
             teacherId: user?.id || 'teacher-1',
             createdAt: new Date(),
             updatedAt: new Date(),
@@ -100,6 +107,7 @@ export default function NewAssignmentPage() {
                     <TabsList>
                         <TabsTrigger value="basic">Basic Info</TabsTrigger>
                         <TabsTrigger value="instructions">Instructions</TabsTrigger>
+                        <TabsTrigger value="content">Linked Content</TabsTrigger>
                         <TabsTrigger value="settings">Settings</TabsTrigger>
                     </TabsList>
 
@@ -201,6 +209,51 @@ export default function NewAssignmentPage() {
                                 />
                                 {errors.instructions && (
                                     <p className="text-sm text-destructive">{errors.instructions.message}</p>
+                                )}
+                            </CardContent>
+                        </Card>
+                    </TabsContent>
+
+                    {/* Linked Content Tab */}
+                    <TabsContent value="content" className="space-y-6">
+                        <Card>
+                            <CardHeader>
+                                <CardTitle>Linked Learning Content</CardTitle>
+                                <CardDescription>
+                                    Attach learning materials students should review before completing this assignment
+                                </CardDescription>
+                            </CardHeader>
+                            <CardContent className="space-y-4">
+                                <Button
+                                    type="button"
+                                    variant="outline"
+                                    onClick={() => setShowContentSelector(true)}
+                                >
+                                    <Plus className="h-4 w-4 mr-2" />
+                                    Link Content
+                                </Button>
+
+                                {selectedContentIds.length === 0 ? (
+                                    <div className="text-center py-8 text-muted-foreground">
+                                        <BookOpen className="h-12 w-12 mx-auto mb-2 opacity-50" />
+                                        <p>No content linked yet</p>
+                                        <p className="text-sm">Link relevant learning materials to help students prepare</p>
+                                    </div>
+                                ) : (
+                                    <div className="space-y-2">
+                                        {selectedContentIds.map(contentId => {
+                                            const content = getContentById(contentId)
+                                            if (!content) return null
+                                            return (
+                                                <LinkedContentCard
+                                                    key={contentId}
+                                                    content={content}
+                                                    compact
+                                                    onRemove={() => setSelectedContentIds(ids => ids.filter(id => id !== contentId))}
+                                                />
+                                            )
+                                        })}
+                                    </div>
                                 )}
                             </CardContent>
                         </Card>
@@ -407,6 +460,14 @@ export default function NewAssignmentPage() {
                     </div>
                 </div>
             </form>
+
+            {/* Content Selector Dialog */}
+            <ContentSelector
+                open={showContentSelector}
+                onOpenChange={setShowContentSelector}
+                selectedContentIds={selectedContentIds}
+                onSelectionChange={setSelectedContentIds}
+            />
         </DashboardLayout>
     )
 }

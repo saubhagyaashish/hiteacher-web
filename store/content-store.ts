@@ -18,6 +18,7 @@ interface ContentStore {
     setFilters: (filters: Partial<ContentFilters>) => void
     setViewMode: (mode: ViewMode) => void
     setSelectedContent: (content: Content | null) => void
+    getContentById: (id: string) => Content | undefined
     getFilteredContent: () => Content[]
     getStats: () => ContentStats
     resetFilters: () => void
@@ -78,6 +79,11 @@ export const useContentStore = create<ContentStore>((set, get) => ({
     setViewMode: (mode) => set({ viewMode: mode }),
 
     setSelectedContent: (content) => set({ selectedContent: content }),
+
+    getContentById: (id) => {
+        const { content } = get()
+        return content.find(c => c.id === id)
+    },
 
     getFilteredContent: () => {
         const { content, filters } = get()
