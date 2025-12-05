@@ -20,6 +20,12 @@ interface ClassStore {
     setCalendarView: (view: 'month' | 'week' | 'day' | 'list') => void
     setSelectedClass: (classSession: ClassSession | null) => void
 
+    // CRUD operations
+    createClass: (classSession: ClassSession) => void
+    createRecurringClasses: (classes: ClassSession[]) => void
+    updateClassWithSeries: (id: string, updates: Partial<ClassSession>, updateSeries?: boolean) => void
+    deleteRecurringSeries: (recurringGroupId: string) => void
+
     // Class operations
     getClassById: (id: string) => ClassSession | undefined
     getFilteredClasses: () => ClassSession[]
@@ -92,6 +98,41 @@ export const useClassStore = create<ClassStore>((set, get) => ({
             )
         }
     }),
+
+    // CRUD operations
+    createClass: (newClass) => set((state) => ({
+        classes: [newClass, ...state.classes]
+    })),
+
+    createRecurringClasses: (newClasses) => set((state) => ({
+        classes: [...newClasses, ...state.classes]
+    })),
+
+    updateClassWithSeries: (id, updates, updateSeries = false) => set((state) => {
+        if (updateSeries) {
+            const targetClass = state.classes.find(cls => cls.id === id)
+            if (targetClass?.recurringGroupId) {
+                // Update all classes in the series
+                return {
+                    classes: state.classes.map(cls =>
+                        cls.recurringGroupId === targetClass.recurringGroupId
+                            ? { ...cls, ...updates, updatedAt: new Date() }
+                            : cls
+                    )
+                }
+            }
+        }
+        // Update single class
+        return {
+            classes: state.classes.map(cls =>
+                cls.id === id ? { ...cls, ...updates, updatedAt: new Date() } : cls
+            )
+        }
+    }),
+
+    deleteRecurringSeries: (recurringGroupId) => set((state) => ({
+        classes: state.classes.filter(cls => cls.recurringGroupId !== recurringGroupId)
+    })),
 
     setFilters: (newFilters) => set((state) => ({
         filters: { ...state.filters, ...newFilters }

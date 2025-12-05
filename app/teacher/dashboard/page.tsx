@@ -3,9 +3,12 @@ import { useRouter } from 'next/navigation'
 import { useAuthStore } from '@/store/auth-store'
 import { useAssignmentStore } from '@/store/assignment-store'
 import { useClassStore } from '@/store/class-store'
+import { useBatchStore } from '@/store/batch-store'
 import { DashboardLayout } from '@/components/layouts/dashboard-layout'
 import { StatCard } from '@/components/dashboard/stat-card'
 import { ScheduleWidget } from '@/components/classes/schedule-widget'
+import { QuickAnalytics } from '@/components/analytics/quick-analytics'
+import { calculateStudentPerformance, getStudentsNeedingAttention } from '@/lib/utils/analytics-utils'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -28,7 +31,8 @@ export default function TeacherDashboard() {
     const router = useRouter()
     const { user } = useAuthStore()
     const { getStats, submissions } = useAssignmentStore()
-    const { getUpcomingClasses, getTodayClasses } = useClassStore()
+    const { getUpcomingClasses, getTodayClasses, classes } = useClassStore()
+    const { batches } = useBatchStore()
 
     useEffect(() => {
         if (!user || user.role !== 'teacher') {
@@ -53,6 +57,28 @@ export default function TeacherDashboard() {
         { label: 'New Assignment', icon: ClipboardList, color: 'bg-accent', href: '/teacher/assignments/new' },
         { label: 'Schedule Class', icon: Calendar, color: 'bg-primary', href: '/teacher/classes/new' },
     ]
+
+    // Calculate analytics for widget
+    const gradedSubmissions = submissions.filter(s => s.status === 'graded' && s.grade !== undefined)
+    const averageGrade = gradedSubmissions.length > 0
+        ? gradedSubmissions.reduce((sum, s) => sum + (s.grade! / s.maxPoints) * 100, 0) / gradedSubmissions.length
+        : 0
+
+    const completedClasses = classes.filter(c => c.status === 'completed')
+    const totalAttendanceSlots = completedClasses.reduce((sum, c) => sum + c.attendance.length, 0)
+    const totalPresent = completedClasses.reduce((sum, c) => {
+        return sum + c.attendance.filter(a => a.status === 'present' || a.status === 'late').length
+    }, 0)
+    const averageAttendance = totalAttendanceSlots > 0 ? (totalPresent / totalAttendanceSlots) * 100 : 0
+
+    const totalStudents = batches.reduce((sum, b) => sum + b.studentIds.length, 0)
+
+    const allStudentIds = new Set<string>()
+    batches.forEach(b => b.studentIds.forEach(id => allStudentIds.add(id)))
+    const studentPerformanceList = Array.from(allStudentIds).map(studentId =>
+        calculateStudentPerformance(studentId, submissions, classes)
+    ).filter(p => p !== null)
+    const studentsNeedingAttention = getStudentsNeedingAttention(studentPerformanceList).length
 
     return (
         <DashboardLayout role="teacher" title="Teacher Dashboard" subtitle={`Welcome back, ${user.name}!`}>
@@ -117,7 +143,15 @@ export default function TeacherDashboard() {
                 </CardContent>
             </Card>
 
-            <div className="grid gap-6 lg:grid-cols-2 mb-8">
+            <div className="grid gap-6 lg:grid-cols-3 mb-8">
+                {/* Quick Analytics */}
+                <QuickAnalytics
+                    averageGrade={averageGrade}
+                    averageAttendance={averageAttendance}
+                    totalStudents={totalStudents}
+                    studentsNeedingAttention={studentsNeedingAttention}
+                />
+
                 {/* Upcoming Classes */}
                 <ScheduleWidget
                     classes={upcomingClasses}

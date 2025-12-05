@@ -3,8 +3,10 @@
 import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuthStore } from '@/store/auth-store'
+import { useClassStore } from '@/store/class-store'
 import { DashboardLayout } from '@/components/layouts/dashboard-layout'
 import { StatCard } from '@/components/dashboard/stat-card'
+import { ScheduleWidget } from '@/components/classes/schedule-widget'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -22,6 +24,7 @@ import {
 export default function StudentDashboard() {
     const router = useRouter()
     const { user } = useAuthStore()
+    const { getUpcomingClasses } = useClassStore()
 
     useEffect(() => {
         if (!user || user.role !== 'student') {
@@ -30,6 +33,8 @@ export default function StudentDashboard() {
     }, [user, router])
 
     if (!user) return null
+
+    const upcomingClasses = getUpcomingClasses(5)
 
     const upcomingAssignments = [
         {
@@ -99,39 +104,12 @@ export default function StudentDashboard() {
 
             <div className="grid gap-6 lg:grid-cols-2 mb-8">
                 {/* Today's Schedule */}
-                <Card>
-                    <CardHeader>
-                        <div className="flex items-center justify-between">
-                            <CardTitle>Today's Schedule</CardTitle>
-                            <Badge>{todaySchedule.length} classes</Badge>
-                        </div>
-                        <CardDescription>Your classes for today</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                        <div className="space-y-4">
-                            {todaySchedule.map((cls, index) => (
-                                <div key={index} className="flex items-start gap-4 p-3 rounded-lg border hover:border-primary/40 transition-colors">
-                                    <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
-                                        <Play className="h-5 w-5 text-primary" />
-                                    </div>
-                                    <div className="flex-1">
-                                        <p className="font-medium">{cls.title}</p>
-                                        <p className="text-sm text-muted-foreground">{cls.teacher}</p>
-                                        <p className="text-xs text-muted-foreground flex items-center gap-1 mt-1">
-                                            <Clock className="h-3 w-3" />
-                                            {cls.time}
-                                        </p>
-                                    </div>
-                                    <Button size="sm">Join Class</Button>
-                                </div>
-                            ))}
-                        </div>
-                        <Button variant="outline" className="w-full mt-4">
-                            <Calendar className="h-4 w-4 mr-2" />
-                            View Full Schedule
-                        </Button>
-                    </CardContent>
-                </Card>
+                <ScheduleWidget
+                    classes={upcomingClasses}
+                    role="student"
+                    title="Upcoming Classes"
+                    limit={5}
+                />
 
                 {/* Upcoming Assignments */}
                 <Card>
