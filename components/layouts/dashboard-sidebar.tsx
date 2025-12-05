@@ -57,7 +57,7 @@ const teacherNavItems: NavItem[] = [
 
 const studentNavItems: NavItem[] = [
     { title: 'Dashboard', href: '/student/dashboard', icon: LayoutDashboard },
-    { title: 'My Classes', href: '/student/my-classes', icon: Calendar },
+    { title: 'Schedule', href: '/student/schedule', icon: Calendar },
     { title: 'Content', href: '/student/content', icon: BookOpen },
     { title: 'Assignments', href: '/student/assignments', icon: ClipboardList, badge: '3' },
     { title: 'Messages', href: '/student/messages', icon: MessageSquare },

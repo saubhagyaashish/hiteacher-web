@@ -2,8 +2,10 @@ import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuthStore } from '@/store/auth-store'
 import { useAssignmentStore } from '@/store/assignment-store'
+import { useClassStore } from '@/store/class-store'
 import { DashboardLayout } from '@/components/layouts/dashboard-layout'
 import { StatCard } from '@/components/dashboard/stat-card'
+import { ScheduleWidget } from '@/components/classes/schedule-widget'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -26,6 +28,7 @@ export default function TeacherDashboard() {
     const router = useRouter()
     const { user } = useAuthStore()
     const { getStats, submissions } = useAssignmentStore()
+    const { getUpcomingClasses, getTodayClasses } = useClassStore()
 
     useEffect(() => {
         if (!user || user.role !== 'teacher') {
@@ -36,43 +39,19 @@ export default function TeacherDashboard() {
     if (!user) return null
 
     const assignmentStats = getStats()
+    const upcomingClasses = getUpcomingClasses()
+    const todayClasses = getTodayClasses()
+
     const recentSubmissions = submissions
         .filter(s => s.status === 'submitted' || s.status === 'graded')
         .slice(0, 5)
         .sort((a, b) => b.submittedAt.getTime() - a.submittedAt.getTime())
 
-    const upcomingClasses = [
-        {
-            id: 1,
-            title: 'Advanced Mathematics',
-            batch: 'Batch A',
-            time: 'Today, 10:00 AM',
-            students: 25,
-            status: 'upcoming' as const
-        },
-        {
-            id: 2,
-            title: 'Physics - Mechanics',
-            batch: 'Batch B',
-            time: 'Today, 2:00 PM',
-            students: 30,
-            status: 'upcoming' as const
-        },
-        {
-            id: 3,
-            title: 'Chemistry Lab',
-            batch: 'Batch C',
-            time: 'Tomorrow, 11:00 AM',
-            students: 20,
-            status: 'scheduled' as const
-        },
-    ]
-
     const quickActions = [
         { label: 'Create Batch', icon: Users, color: 'bg-primary', href: '/teacher/batches/new' },
         { label: 'Upload Content', icon: Upload, color: 'bg-secondary', href: '/teacher/content/new' },
         { label: 'New Assignment', icon: ClipboardList, color: 'bg-accent', href: '/teacher/assignments/new' },
-        { label: 'Schedule Class', icon: Calendar, color: 'bg-primary', href: '/teacher/classes' },
+        { label: 'Schedule Class', icon: Calendar, color: 'bg-primary', href: '/teacher/classes/new' },
     ]
 
     return (
@@ -140,41 +119,12 @@ export default function TeacherDashboard() {
 
             <div className="grid gap-6 lg:grid-cols-2 mb-8">
                 {/* Upcoming Classes */}
-                <Card>
-                    <CardHeader>
-                        <div className="flex items-center justify-between">
-                            <CardTitle>Upcoming Classes</CardTitle>
-                            <Badge>{upcomingClasses.length}</Badge>
-                        </div>
-                        <CardDescription>Your schedule for today and tomorrow</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                        <div className="space-y-4">
-                            {upcomingClasses.map((cls) => (
-                                <div key={cls.id} className="flex items-start gap-4 p-3 rounded-lg border hover:border-primary/40 transition-colors">
-                                    <div className={`h-10 w-10 rounded-full flex items-center justify-center ${cls.status === 'upcoming' ? 'bg-primary/10' : 'bg-muted'}`}>
-                                        <Calendar className={`h-5 w-5 ${cls.status === 'upcoming' ? 'text-primary' : 'text-muted-foreground'}`} />
-                                    </div>
-                                    <div className="flex-1 min-w-0">
-                                        <p className="font-medium truncate">{cls.title}</p>
-                                        <p className="text-sm text-muted-foreground">{cls.batch} • {cls.students} students</p>
-                                        <p className="text-xs text-muted-foreground flex items-center gap-1 mt-1">
-                                            <Clock className="h-3 w-3" />
-                                            {cls.time}
-                                        </p>
-                                    </div>
-                                    <Button size="sm" variant={cls.status === 'upcoming' ? 'default' : 'outline'}>
-                                        {cls.status === 'upcoming' ? 'Join' : 'View'}
-                                    </Button>
-                                </div>
-                            ))}
-                        </div>
-                        <Button variant="outline" className="w-full mt-4">
-                            <Calendar className="h-4 w-4 mr-2" />
-                            View Full Calendar
-                        </Button>
-                    </CardContent>
-                </Card>
+                <ScheduleWidget
+                    classes={upcomingClasses}
+                    role="teacher"
+                    title="Today's Classes"
+                    limit={5}
+                />
 
                 {/* Recent Submissions */}
                 <Card>
