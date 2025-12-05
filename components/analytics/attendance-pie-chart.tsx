@@ -55,7 +55,7 @@ export function AttendancePieChart({
                             <div className="flex items-center gap-2">
                                 <div
                                     className="w-3 h-3 rounded-full"
-                                    style={{ backgroundColor: item.fill }}
+                                    style={{ backgroundColor: item.fill as string }}
                                 />
                                 <span>{item.name}</span>
                             </div>

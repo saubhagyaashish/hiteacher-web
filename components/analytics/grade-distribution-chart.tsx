@@ -42,7 +42,7 @@ export function GradeDistributionChart({
                         <div key={index} className="space-y-1">
                             <div
                                 className="w-4 h-4 rounded-full mx-auto"
-                                style={{ backgroundColor: item.fill }}
+                                style={{ backgroundColor: item.fill as string }}
                             />
                             <p className="text-xs font-medium">{item.name.split(' ')[0]}</p>
                             <p className="text-sm font-bold">{item.value}</p>
