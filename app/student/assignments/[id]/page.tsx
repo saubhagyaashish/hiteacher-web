@@ -326,6 +326,7 @@ export default function StudentAssignmentPage({ params }: { params: Promise<{ id
                                                 {...register('linkUrl')}
                                                 placeholder="https://example.com/your-work"
                                                 type="url"
+                                                className="h-11"
                                             />
                                             {errors.linkUrl && (
                                                 <p className="text-sm text-destructive">{errors.linkUrl.message}</p>
@@ -336,16 +337,21 @@ export default function StudentAssignmentPage({ params }: { params: Promise<{ id
                                         </div>
                                     )}
 
-                                    <div className="flex gap-2 pt-4">
+                                    <div className="flex flex-col gap-3 pt-4 sm:flex-row">
                                         <Button
                                             type="button"
                                             variant="outline"
                                             onClick={() => router.back()}
                                             disabled={isSubmitting}
+                                            className="w-full sm:w-auto h-11"
                                         >
                                             Cancel
                                         </Button>
-                                        <Button type="submit" disabled={isSubmitting} className="flex-1">
+                                        <Button
+                                            type="submit"
+                                            disabled={isSubmitting}
+                                            className="w-full sm:w-auto h-11"
+                                        >
                                             {isSubmitting ? (
                                                 <>
                                                     <Send className="w-4 h-4 mr-2 animate-pulse" />

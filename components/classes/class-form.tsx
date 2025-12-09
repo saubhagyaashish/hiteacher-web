@@ -1,6 +1,6 @@
 'use client'
 
-import { useForm } from 'react-hook-form'
+import { useForm, SubmitHandler } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { ClassSessionFormData, classSessionSchema } from '@/lib/validations/class'
 import { Batch } from '@/types/batch'
@@ -56,14 +56,8 @@ export function ClassForm({
         defaultValues?.recurringPattern?.endDate ? 'date' : 'occurrences'
     )
 
-    const {
-        register,
-        handleSubmit,
-        formState: { errors },
-        watch,
-        setValue,
-    } = useForm<ClassSessionFormData>({
-        resolver: zodResolver(classSessionSchema),
+    const form = useForm<ClassSessionFormData>({
+        resolver: zodResolver(classSessionSchema) as any, // Type assertion needed due to Zod coercion
         defaultValues: {
             duration: 60,
             isRecurring: false,
@@ -71,29 +65,15 @@ export function ClassForm({
         },
     })
 
+    const {
+        register,
+        handleSubmit,
+        formState: { errors },
+        watch,
+        setValue,
+    } = form
+
     const watchedIsRecurring = watch('isRecurring')
-
-    const handleFormSubmit = (data: ClassSessionFormData) => {
-        // Build recurring pattern if applicable
-        if (data.isRecurring && recurringType !== 'none') {
-            data.recurringPattern = {
-                type: recurringType,
-                interval: 1,
-                daysOfWeek: recurringType === 'weekly' ? selectedDays : undefined,
-                endDate: endType === 'date' ? data.recurringPattern?.endDate : undefined,
-                occurrences: endType === 'occurrences' ? data.recurringPattern?.occurrences : undefined,
-            }
-        }
-
-        // Build meeting link if provided
-        if (showMeetingLink && data.meetingLink) {
-            // Meeting link is already in the form data
-        } else {
-            data.meetingLink = undefined
-        }
-
-        onSubmit(data)
-    }
 
     const toggleDay = (day: number) => {
         setSelectedDays(prev =>
@@ -102,7 +82,29 @@ export function ClassForm({
     }
 
     return (
-        <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-6">
+        <form onSubmit={form.handleSubmit((data) => {
+            const formData = data as unknown as ClassSessionFormData
+
+            // Build recurring pattern if applicable
+            if (formData.isRecurring && recurringType !== 'none') {
+                formData.recurringPattern = {
+                    type: recurringType,
+                    interval: 1,
+                    daysOfWeek: recurringType === 'weekly' ? selectedDays : undefined,
+                    endDate: endType === 'date' ? formData.recurringPattern?.endDate : undefined,
+                    occurrences: endType === 'occurrences' ? formData.recurringPattern?.occurrences : undefined,
+                }
+            }
+
+            // Build meeting link if provided
+            if (showMeetingLink && formData.meetingLink) {
+                // Meeting link is already in the form data
+            } else {
+                formData.meetingLink = undefined
+            }
+
+            onSubmit(formData)
+        })} className="space-y-6">
             {/* Basic Information */}
             <Card>
                 <CardHeader>
@@ -119,7 +121,7 @@ export function ClassForm({
                         <select
                             id="batchId"
                             {...register('batchId')}
-                            className="w-full px-3 py-2 border rounded-md bg-background"
+                            className="w-full h-11 px-3 py-2 border rounded-md bg-background"
                         >
                             <option value="">Select a batch</option>
                             {batches.map((batch) => (
@@ -140,6 +142,7 @@ export function ClassForm({
                             id="title"
                             {...register('title')}
                             placeholder="e.g., Calculus - Derivatives"
+                            className="h-11"
                         />
                         {errors.title && (
                             <p className="text-sm text-red-600">{errors.title.message}</p>
@@ -153,6 +156,7 @@ export function ClassForm({
                             id="topic"
                             {...register('topic')}
                             placeholder="e.g., Introduction to Derivatives"
+                            className="h-11"
                         />
                         {errors.topic && (
                             <p className="text-sm text-red-600">{errors.topic.message}</p>
@@ -181,13 +185,14 @@ export function ClassForm({
                     </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                    <div className="grid gap-4 sm:grid-cols-2">
+                    <div className="grid gap-4 grid-cols-1 sm:grid-cols-2">
                         {/* Start Date/Time */}
                         <div className="space-y-2">
                             <Label htmlFor="startTime">Start Date & Time *</Label>
                             <Input
                                 id="startTime"
                                 type="datetime-local"
+                                className="h-11"
                                 {...register('startTime')}
                             />
                             {errors.startTime && (
@@ -204,6 +209,7 @@ export function ClassForm({
                                 min="15"
                                 max="480"
                                 step="15"
+                                className="h-11"
                                 {...register('duration', { valueAsNumber: true })}
                             />
                             {errors.duration && (
@@ -238,7 +244,7 @@ export function ClassForm({
                                 <select
                                     value={recurringType}
                                     onChange={(e) => setRecurringType(e.target.value as any)}
-                                    className="w-full px-3 py-2 border rounded-md bg-background"
+                                    className="w-full h-11 px-3 py-2 border rounded-md bg-background"
                                 >
                                     <option value="none">Select pattern</option>
                                     <option value="daily">Daily</option>
@@ -257,8 +263,8 @@ export function ClassForm({
                                                 type="button"
                                                 onClick={() => toggleDay(day.value)}
                                                 className={`px-3 py-1 text-sm rounded-md border transition-colors ${selectedDays.includes(day.value)
-                                                        ? 'bg-primary text-primary-foreground border-primary'
-                                                        : 'bg-background hover:bg-muted'
+                                                    ? 'bg-primary text-primary-foreground border-primary'
+                                                    : 'bg-background hover:bg-muted'
                                                     }`}
                                             >
                                                 {day.label}
@@ -354,7 +360,7 @@ export function ClassForm({
                                 <select
                                     id="platform"
                                     {...register('meetingLink.platform')}
-                                    className="w-full px-3 py-2 border rounded-md bg-background"
+                                    className="w-full h-11 px-3 py-2 border rounded-md bg-background"
                                 >
                                     {PLATFORM_OPTIONS.map((platform) => (
                                         <option key={platform.value} value={platform.value}>
@@ -370,6 +376,7 @@ export function ClassForm({
                                 <Input
                                     id="meetingUrl"
                                     type="url"
+                                    className="h-11"
                                     {...register('meetingLink.url')}
                                     placeholder="https://zoom.us/j/123456789"
                                 />
@@ -378,12 +385,13 @@ export function ClassForm({
                                 )}
                             </div>
 
-                            <div className="grid gap-4 sm:grid-cols-2">
+                            <div className="grid gap-4 grid-cols-1 sm:grid-cols-2">
                                 {/* Meeting ID */}
                                 <div className="space-y-2">
                                     <Label htmlFor="meetingId">Meeting ID (optional)</Label>
                                     <Input
                                         id="meetingId"
+                                        className="h-11"
                                         {...register('meetingLink.meetingId')}
                                         placeholder="123 456 7890"
                                     />
@@ -395,6 +403,7 @@ export function ClassForm({
                                     <Input
                                         id="password"
                                         type="text"
+                                        className="h-11"
                                         {...register('meetingLink.password')}
                                         placeholder="****"
                                     />
@@ -420,16 +429,17 @@ export function ClassForm({
             </Card>
 
             {/* Submit Button */}
-            <div className="flex justify-end gap-3">
+            <div className="flex flex-col gap-3 sm:flex-row sm:justify-end">
                 <Button
                     type="button"
                     variant="outline"
                     onClick={() => window.history.back()}
                     disabled={isLoading}
+                    className="w-full sm:w-auto h-11"
                 >
                     Cancel
                 </Button>
-                <Button type="submit" disabled={isLoading}>
+                <Button type="submit" disabled={isLoading} className="w-full sm:w-auto h-11">
                     {isLoading ? 'Saving...' : submitLabel}
                 </Button>
             </div>

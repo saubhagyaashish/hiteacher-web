@@ -10,6 +10,7 @@ import { DashboardLayout } from '@/components/layouts/dashboard-layout'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { Textarea } from '@/components/ui/textarea'
 import {
     Select,
     SelectContent,
@@ -128,11 +129,11 @@ export default function NewContentPage() {
                                 {/* Description */}
                                 <div className="space-y-2">
                                     <Label htmlFor="description">Description</Label>
-                                    <textarea
+                                    <Textarea
                                         id="description"
                                         {...register('description')}
                                         placeholder="Brief description of the content..."
-                                        className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                        rows={3}
                                     />
                                     {errors.description && (
                                         <p className="text-sm text-destructive">{errors.description.message}</p>
@@ -277,6 +278,7 @@ export default function NewContentPage() {
                                             <input
                                                 type="checkbox"
                                                 value="batch-1"
+                                                className="w-4 h-4"
                                                 onChange={(e) => {
                                                     const current = watch('batchIds') || []
                                                     setValue(
@@ -293,6 +295,7 @@ export default function NewContentPage() {
                                             <input
                                                 type="checkbox"
                                                 value="batch-2"
+                                                className="w-4 h-4"
                                                 onChange={(e) => {
                                                     const current = watch('batchIds') || []
                                                     setValue(
@@ -309,6 +312,7 @@ export default function NewContentPage() {
                                             <input
                                                 type="checkbox"
                                                 value="batch-3"
+                                                className="w-4 h-4"
                                                 onChange={(e) => {
                                                     const current = watch('batchIds') || []
                                                     setValue(
@@ -333,6 +337,7 @@ export default function NewContentPage() {
                                         <input
                                             type="checkbox"
                                             defaultChecked
+                                            className="w-4 h-4"
                                             {...register('commentsEnabled')}
                                         />
                                         <span>Enable comments</span>
@@ -341,6 +346,7 @@ export default function NewContentPage() {
                                         <input
                                             type="checkbox"
                                             defaultChecked
+                                            className="w-4 h-4"
                                             {...register('downloadEnabled')}
                                         />
                                         <span>Allow downloads</span>
