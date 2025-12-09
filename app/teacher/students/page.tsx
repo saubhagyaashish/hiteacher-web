@@ -90,35 +90,35 @@ export default function StudentsPage() {
 
     return (
         <DashboardLayout role="teacher" title="Students" subtitle="Manage your students across all batches">
-            {/* Header */}
-            <div className="flex items-center justify-between mb-6">
-                <div className="flex-1 max-w-sm">
+            {/* Header - Responsive Layout */}
+            <div className="flex flex-col gap-3 mb-6 sm:flex-row sm:items-center sm:justify-between">
+                <div className="flex-1 w-full sm:max-w-sm">
                     <div className="relative">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                         <Input
                             placeholder="Search students..."
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            className="pl-9"
+                            className="pl-9 h-11"
                         />
                     </div>
                 </div>
-                <Button variant="outline">
+                <Button variant="outline" className="w-full sm:w-auto h-11">
                     <Filter className="h-4 w-4 mr-2" />
                     Filters
                 </Button>
             </div>
 
-            {/* Stats */}
-            <div className="grid gap-4 md:grid-cols-3 mb-6">
+            {/* Stats - Responsive Grid */}
+            <div className="grid gap-3 grid-cols-1 sm:grid-cols-3 mb-6 md:gap-4">
                 <Card>
-                    <CardContent className="p-6">
+                    <CardContent className="p-4 md:p-6">
                         <div className="text-2xl font-bold">{students.length}</div>
                         <p className="text-sm text-muted-foreground">Total Students</p>
                     </CardContent>
                 </Card>
                 <Card>
-                    <CardContent className="p-6">
+                    <CardContent className="p-4 md:p-6">
                         <div className="text-2xl font-bold">
                             {Math.round(students.reduce((acc, s) => acc + s.performance, 0) / students.length)}%
                         </div>
@@ -126,7 +126,7 @@ export default function StudentsPage() {
                     </CardContent>
                 </Card>
                 <Card>
-                    <CardContent className="p-6">
+                    <CardContent className="p-4 md:p-6">
                         <div className="text-2xl font-bold">
                             {Math.round(students.reduce((acc, s) => acc + s.attendance, 0) / students.length)}%
                         </div>
@@ -135,16 +135,74 @@ export default function StudentsPage() {
                 </Card>
             </div>
 
-            {/* Student List */}
-            <Card>
-                <CardContent className="p-0">
-                    <div className="divide-y">
-                        {filteredStudents.map((student) => {
-                            const trend = getPerformanceTrend(student.performance)
-                            const TrendIcon = trend.icon
+            {/* Student List - Cards on Mobile, List on Desktop */}
+            <div className="space-y-3 md:space-y-0">
+                {filteredStudents.map((student) => {
+                    const trend = getPerformanceTrend(student.performance)
+                    const TrendIcon = trend.icon
 
-                            return (
-                                <div key={student.id} className="flex items-center gap-4 p-4 hover:bg-muted/50 transition-colors">
+                    return (
+                        <Card key={student.id} className="md:mb-0">
+                            {/* Mobile Card Layout */}
+                            <CardContent className="p-4 md:hidden">
+                                <div className="space-y-3">
+                                    {/* Header */}
+                                    <div className="flex items-start gap-3">
+                                        <Avatar className="h-12 w-12 shrink-0">
+                                            <AvatarImage src={student.avatar} />
+                                            <AvatarFallback>{student.name[0]}</AvatarFallback>
+                                        </Avatar>
+                                        <div className="flex-1 min-w-0">
+                                            <div className="flex items-center gap-2 mb-1">
+                                                <p className="font-medium truncate">{student.name}</p>
+                                                <Badge variant="outline" className="text-xs shrink-0">{student.status}</Badge>
+                                            </div>
+                                            <p className="text-sm text-muted-foreground truncate">{student.email}</p>
+                                        </div>
+                                    </div>
+
+                                    {/* Batches */}
+                                    <div className="flex flex-wrap gap-2">
+                                        {student.batches.slice(0, 2).map((batch, idx) => (
+                                            <Badge key={idx} variant="secondary" className="text-xs">
+                                                {batch}
+                                            </Badge>
+                                        ))}
+                                        {student.batches.length > 2 && (
+                                            <span className="text-xs text-muted-foreground self-center">
+                                                +{student.batches.length - 2} more
+                                            </span>
+                                        )}
+                                    </div>
+
+                                    {/* Stats */}
+                                    <div className="flex items-center justify-around py-2 bg-muted/30 rounded-md">
+                                        <div className="text-center">
+                                            <div className="flex items-center justify-center gap-1 mb-1">
+                                                <TrendIcon className={`h-4 w-4 ${trend.color}`} />
+                                                <span className="font-medium">{student.performance}%</span>
+                                            </div>
+                                            <p className="text-xs text-muted-foreground">Performance</p>
+                                        </div>
+                                        <div className="h-8 w-px bg-border" />
+                                        <div className="text-center">
+                                            <p className="font-medium mb-1">{student.attendance}%</p>
+                                            <p className="text-xs text-muted-foreground">Attendance</p>
+                                        </div>
+                                    </div>
+
+                                    {/* Action Button */}
+                                    <Button variant="outline" className="w-full h-11" asChild>
+                                        <Link href={`/teacher/students/${student.id}`}>
+                                            View Profile
+                                        </Link>
+                                    </Button>
+                                </div>
+                            </CardContent>
+
+                            {/* Desktop List Layout */}
+                            <CardContent className="hidden md:block p-0">
+                                <div className="flex items-center gap-4 p-4 hover:bg-muted/50 transition-colors">
                                     <Avatar className="h-12 w-12">
                                         <AvatarImage src={student.avatar} />
                                         <AvatarFallback>{student.name[0]}</AvatarFallback>
@@ -190,17 +248,17 @@ export default function StudentsPage() {
                                         </Link>
                                     </Button>
                                 </div>
-                            )
-                        })}
-                    </div>
-                </CardContent>
-            </Card>
+                            </CardContent>
+                        </Card>
+                    )
+                })}
+            </div>
 
             {/* Empty State */}
             {filteredStudents.length === 0 && (
-                <Card className="p-12 text-center">
-                    <h3 className="text-lg font-semibold mb-2">No students found</h3>
-                    <p className="text-muted-foreground">
+                <Card className="p-8 md:p-12 text-center">
+                    <h3 className="text-base md:text-lg font-semibold mb-2">No students found</h3>
+                    <p className="text-sm text-muted-foreground">
                         Try adjusting your search terms
                     </p>
                 </Card>

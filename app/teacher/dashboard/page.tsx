@@ -1,3 +1,5 @@
+'use client'
+
 import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuthStore } from '@/store/auth-store'
@@ -82,8 +84,8 @@ export default function TeacherDashboard() {
 
     return (
         <DashboardLayout role="teacher" title="Teacher Dashboard" subtitle={`Welcome back, ${user.name}!`}>
-            {/* Stats Grid */}
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 mb-8">
+            {/* Stats Grid - Mobile First: 1 col → 2 cols → 4 cols */}
+            <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 mb-6 md:mb-8">
                 <StatCard
                     title="Total Students"
                     value="45"
@@ -115,26 +117,30 @@ export default function TeacherDashboard() {
                 />
             </div>
 
-            {/* Quick Actions */}
-            <Card className="mb-8">
-                <CardHeader>
-                    <CardTitle>Quick Actions</CardTitle>
-                    <CardDescription>Common tasks to get you started</CardDescription>
+            {/* Quick Actions - 2 cols mobile, 4 cols desktop */}
+            <Card className="mb-6 md:mb-8">
+                <CardHeader className="p-4 md:p-6">
+                    <CardTitle className="text-base md:text-lg">Quick Actions</CardTitle>
+                    <CardDescription className="text-xs md:text-sm">Common tasks to get you started</CardDescription>
                 </CardHeader>
-                <CardContent>
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <CardContent className="p-4 pt-0 md:p-6 md:pt-0">
+                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
                         {quickActions.map((action, index) => {
                             const Icon = action.icon
                             return (
                                 <Link key={index} href={action.href}>
                                     <Button
                                         variant="outline"
-                                        className="h-24 w-full flex-col gap-2"
+                                        className="
+                                            h-28 w-full flex-col gap-2
+                                            md:h-24
+                                            active:scale-[0.98] transition-transform
+                                        "
                                     >
-                                        <div className={`h-10 w-10 rounded-full ${action.color} flex items-center justify-center`}>
-                                            <Icon className="h-5 w-5 text-white" />
+                                        <div className={`h-10 w-10 rounded-full ${action.color} flex items-center justify-center md:h-12 md:w-12`}>
+                                            <Icon className="h-5 w-5 text-white md:h-6 md:w-6" />
                                         </div>
-                                        <span className="text-sm font-medium">{action.label}</span>
+                                        <span className="text-xs font-medium md:text-sm">{action.label}</span>
                                     </Button>
                                 </Link>
                             )
@@ -143,7 +149,8 @@ export default function TeacherDashboard() {
                 </CardContent>
             </Card>
 
-            <div className="grid gap-6 lg:grid-cols-3 mb-8">
+            {/* Widgets Grid - Mobile: stack, Desktop: 3 cols */}
+            <div className="grid gap-4 grid-cols-1 lg:grid-cols-3 mb-6 md:gap-6 md:mb-8">
                 {/* Quick Analytics */}
                 <QuickAnalytics
                     averageGrade={averageGrade}

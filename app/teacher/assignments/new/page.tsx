@@ -128,6 +128,7 @@ export default function NewAssignmentPage() {
                                         id="title"
                                         {...register('title')}
                                         placeholder="e.g., Chapter 5 Practice Problems"
+                                        className="h-11"
                                     />
                                     {errors.title && (
                                         <p className="text-sm text-destructive">{errors.title.message}</p>
@@ -148,7 +149,7 @@ export default function NewAssignmentPage() {
                                     )}
                                 </div>
 
-                                <div className="grid gap-4 md:grid-cols-2">
+                                <div className="grid gap-4 grid-cols-1 md:grid-cols-2">
                                     {/* Assignment Type */}
                                     <div className="space-y-2">
                                         <Label>Assignment Type *</Label>
@@ -156,7 +157,7 @@ export default function NewAssignmentPage() {
                                             value={assignmentType}
                                             onValueChange={(value: any) => setValue('type', value)}
                                         >
-                                            <SelectTrigger>
+                                            <SelectTrigger className="h-11">
                                                 <SelectValue />
                                             </SelectTrigger>
                                             <SelectContent>
@@ -178,7 +179,7 @@ export default function NewAssignmentPage() {
                                             defaultValue="draft"
                                             onValueChange={(value: any) => setValue('status', value)}
                                         >
-                                            <SelectTrigger>
+                                            <SelectTrigger className="h-11">
                                                 <SelectValue />
                                             </SelectTrigger>
                                             <SelectContent>
@@ -269,7 +270,7 @@ export default function NewAssignmentPage() {
                                 </CardDescription>
                             </CardHeader>
                             <CardContent className="space-y-4">
-                                <div className="grid gap-4 md:grid-cols-2">
+                                <div className="grid gap-4 grid-cols-1 md:grid-cols-2">
                                     {/* Grading Type */}
                                     <div className="space-y-2">
                                         <Label>Grading Type</Label>
@@ -277,7 +278,7 @@ export default function NewAssignmentPage() {
                                             value={gradingType}
                                             onValueChange={(value: any) => setValue('gradingType', value)}
                                         >
-                                            <SelectTrigger>
+                                            <SelectTrigger className="h-11">
                                                 <SelectValue />
                                             </SelectTrigger>
                                             <SelectContent>
@@ -295,6 +296,7 @@ export default function NewAssignmentPage() {
                                             type="number"
                                             {...register('maxPoints', { valueAsNumber: true })}
                                             placeholder="100"
+                                            className="h-11"
                                         />
                                         {errors.maxPoints && (
                                             <p className="text-sm text-destructive">{errors.maxPoints.message}</p>
@@ -317,13 +319,14 @@ export default function NewAssignmentPage() {
                                     </div>
                                 )}
 
-                                <div className="grid gap-4 md:grid-cols-2">
+                                <div className="grid gap-4 grid-cols-1 md:grid-cols-2">
                                     {/* Due Date */}
                                     <div className="space-y-2">
                                         <Label htmlFor="dueDate">Due Date *</Label>
                                         <Input
                                             id="dueDate"
                                             type="datetime-local"
+                                            className="h-11"
                                             {...register('dueDate', {
                                                 setValueAs: (value) => value ? new Date(value) : new Date()
                                             })}
@@ -339,6 +342,7 @@ export default function NewAssignmentPage() {
                                         <Input
                                             id="assignedDate"
                                             type="datetime-local"
+                                            className="h-11"
                                             {...register('assignedDate', {
                                                 setValueAs: (value) => value ? new Date(value) : new Date()
                                             })}
@@ -430,21 +434,23 @@ export default function NewAssignmentPage() {
                     </TabsContent>
                 </Tabs>
 
-                {/* Action Buttons */}
-                <div className="flex items-center justify-between pt-6 border-t mt-6">
+                {/* Action Buttons - Mobile Responsive */}
+                <div className="flex flex-col gap-3 pt-6 border-t mt-6 sm:flex-row sm:items-center sm:justify-between">
                     <Button
                         type="button"
                         variant="outline"
                         onClick={() => router.back()}
+                        className="w-full sm:w-auto h-11"
                     >
                         Cancel
                     </Button>
-                    <div className="flex gap-2">
+                    <div className="flex flex-col gap-2 sm:flex-row">
                         <Button
                             type="submit"
                             variant="outline"
                             disabled={isSubmitting}
                             onClick={() => setValue('status', 'draft')}
+                            className="w-full sm:w-auto h-11"
                         >
                             <Save className="h-4 w-4 mr-2" />
                             Save as Draft
@@ -453,6 +459,7 @@ export default function NewAssignmentPage() {
                             type="submit"
                             disabled={isSubmitting}
                             onClick={() => setValue('status', 'active')}
+                            className="w-full sm:w-auto h-11"
                         >
                             <Send className="h-4 w-4 mr-2" />
                             Publish Assignment

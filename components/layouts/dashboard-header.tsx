@@ -1,6 +1,6 @@
 'use client'
 
-import { Bell, Search, LogOut, User } from 'lucide-react'
+import { Bell, Search, LogOut, User, Menu } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
@@ -20,9 +20,10 @@ import { useRouter } from 'next/navigation'
 interface DashboardHeaderProps {
     title: string
     subtitle?: string
+    onMobileMenuClick?: () => void
 }
 
-export function DashboardHeader({ title, subtitle }: DashboardHeaderProps) {
+export function DashboardHeader({ title, subtitle, onMobileMenuClick }: DashboardHeaderProps) {
     const router = useRouter()
     const { user, logout } = useAuthStore()
 
@@ -42,17 +43,27 @@ export function DashboardHeader({ title, subtitle }: DashboardHeaderProps) {
 
     return (
         <header className="sticky top-0 z-40 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-            <div className="flex h-16 items-center gap-4 px-6">
+            <div className="flex h-16 items-center gap-3 px-4 md:gap-4 md:px-6">
+                {/* Mobile: Hamburger Menu */}
+                <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={onMobileMenuClick}
+                    className="md:hidden h-10 w-10"
+                >
+                    <Menu className="h-5 w-5" />
+                </Button>
+
                 {/* Title */}
-                <div className="flex-1">
-                    <h1 className="text-lg font-semibold">{title}</h1>
+                <div className="flex-1 min-w-0">
+                    <h1 className="text-base font-semibold truncate md:text-lg">{title}</h1>
                     {subtitle && (
-                        <p className="text-sm text-muted-foreground">{subtitle}</p>
+                        <p className="text-xs text-muted-foreground truncate md:text-sm">{subtitle}</p>
                     )}
                 </div>
 
-                {/* Search */}
-                <div className="hidden md:flex items-center w-64">
+                {/* Desktop Search */}
+                <div className="hidden lg:flex items-center w-64">
                     <div className="relative w-full">
                         <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                         <Input
@@ -63,13 +74,22 @@ export function DashboardHeader({ title, subtitle }: DashboardHeaderProps) {
                     </div>
                 </div>
 
+                {/* Mobile Search Button - Opens modal on mobile */}
+                <Button
+                    variant="ghost"
+                    size="icon"
+                    className="lg:hidden h-10 w-10"
+                >
+                    <Search className="h-5 w-5" />
+                </Button>
+
                 {/* Theme Toggle */}
                 <ThemeToggle />
 
                 {/* Notifications */}
                 <Dialog>
                     <DialogTrigger asChild>
-                        <Button variant="ghost" size="icon" className="relative">
+                        <Button variant="ghost" size="icon" className="relative h-10 w-10">
                             <Bell className="h-5 w-5" />
                             <Badge
                                 variant="destructive"
@@ -79,17 +99,17 @@ export function DashboardHeader({ title, subtitle }: DashboardHeaderProps) {
                             </Badge>
                         </Button>
                     </DialogTrigger>
-                    <DialogContent>
+                    <DialogContent className="w-[95vw] max-w-md sm:w-full">
                         <DialogHeader>
                             <DialogTitle>Notifications</DialogTitle>
                             <DialogDescription>
                                 You have 3 unread notifications
                             </DialogDescription>
                         </DialogHeader>
-                        <div className="space-y-4 py-4">
-                            <div className="flex items-start gap-3 p-3 rounded-md hover:bg-muted cursor-pointer">
-                                <div className="h-2 w-2 rounded-full bg-primary mt-2" />
-                                <div className="flex-1 space-y-1">
+                        <div className="space-y-4 py-4 max-h-[60vh] overflow-y-auto">
+                            <div className="flex items-start gap-3 p-3 rounded-md hover:bg-muted cursor-pointer active:scale-95 transition-transform">
+                                <div className="h-2 w-2 rounded-full bg-primary mt-2 shrink-0" />
+                                <div className="flex-1 space-y-1 min-w-0">
                                     <p className="text-sm font-medium">New student enrolled</p>
                                     <p className="text-xs text-muted-foreground">
                                         Alice Johnson joined Mathematics batch
@@ -97,9 +117,9 @@ export function DashboardHeader({ title, subtitle }: DashboardHeaderProps) {
                                     <p className="text-xs text-muted-foreground">2 hours ago</p>
                                 </div>
                             </div>
-                            <div className="flex items-start gap-3 p-3 rounded-md hover:bg-muted cursor-pointer">
-                                <div className="h-2 w-2 rounded-full bg-primary mt-2" />
-                                <div className="flex-1 space-y-1">
+                            <div className="flex items-start gap-3 p-3 rounded-md hover:bg-muted cursor-pointer active:scale-95 transition-transform">
+                                <div className="h-2 w-2 rounded-full bg-primary mt-2 shrink-0" />
+                                <div className="flex-1 space-y-1 min-w-0">
                                     <p className="text-sm font-medium">Assignment submitted</p>
                                     <p className="text-xs text-muted-foreground">
                                         Bob Williams submitted Physics homework
@@ -107,9 +127,9 @@ export function DashboardHeader({ title, subtitle }: DashboardHeaderProps) {
                                     <p className="text-xs text-muted-foreground">5 hours ago</p>
                                 </div>
                             </div>
-                            <div className="flex items-start gap-3 p-3 rounded-md hover:bg-muted cursor-pointer">
-                                <div className="h-2 w-2 rounded-full bg-secondary mt-2" />
-                                <div className="flex-1 space-y-1">
+                            <div className="flex items-start gap-3 p-3 rounded-md hover:bg-muted cursor-pointer active:scale-95 transition-transform">
+                                <div className="h-2 w-2 rounded-full bg-secondary mt-2 shrink-0" />
+                                <div className="flex-1 space-y-1 min-w-0">
                                     <p className="text-sm font-medium">Class reminder</p>
                                     <p className="text-xs text-muted-foreground">
                                         Chemistry class starts in 1 hour
@@ -124,19 +144,19 @@ export function DashboardHeader({ title, subtitle }: DashboardHeaderProps) {
                 {/* User Menu */}
                 <Dialog>
                     <DialogTrigger asChild>
-                        <Button variant="ghost" className="gap-2 pl-2 pr-3">
+                        <Button variant="ghost" className="gap-2 pl-2 pr-2 h-10 md:pr-3">
                             <Avatar className="h-8 w-8">
                                 <AvatarImage src={user?.avatar} />
                                 <AvatarFallback className="text-xs">
                                     {user?.name ? getInitials(user.name) : 'U'}
                                 </AvatarFallback>
                             </Avatar>
-                            <span className="hidden md:inline text-sm font-medium">
+                            <span className="hidden lg:inline text-sm font-medium">
                                 {user?.name}
                             </span>
                         </Button>
                     </DialogTrigger>
-                    <DialogContent>
+                    <DialogContent className="w-[95vw] max-w-md sm:w-full">
                         <DialogHeader>
                             <DialogTitle>Account</DialogTitle>
                             <DialogDescription>
@@ -151,22 +171,22 @@ export function DashboardHeader({ title, subtitle }: DashboardHeaderProps) {
                                         {user?.name ? getInitials(user.name) : 'U'}
                                     </AvatarFallback>
                                 </Avatar>
-                                <div>
-                                    <p className="font-medium">{user?.name}</p>
-                                    <p className="text-sm text-muted-foreground">{user?.email}</p>
+                                <div className="flex-1 min-w-0">
+                                    <p className="font-medium truncate">{user?.name}</p>
+                                    <p className="text-sm text-muted-foreground truncate">{user?.email}</p>
                                     <Badge variant="secondary" className="mt-1">
                                         {user?.role}
                                     </Badge>
                                 </div>
                             </div>
                             <div className="flex flex-col gap-2">
-                                <Button variant="outline" className="justify-start gap-2">
+                                <Button variant="outline" className="justify-start gap-2 h-12">
                                     <User className="h-4 w-4" />
                                     Profile Settings
                                 </Button>
                                 <Button
                                     variant="outline"
-                                    className="justify-start gap-2 text-destructive hover:text-destructive"
+                                    className="justify-start gap-2 h-12 text-destructive hover:text-destructive"
                                     onClick={handleLogout}
                                 >
                                     <LogOut className="h-4 w-4" />

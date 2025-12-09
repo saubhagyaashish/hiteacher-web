@@ -83,20 +83,20 @@ export default function BatchesPage() {
 
     return (
         <DashboardLayout role="teacher" title="Batch Management" subtitle="Manage your batches and classes">
-            {/* Header Actions */}
-            <div className="flex items-center justify-between mb-6">
-                <div className="flex-1 max-w-sm">
+            {/* Header Actions - Responsive */}
+            <div className="flex flex-col gap-3 mb-6 sm:flex-row sm:items-center sm:justify-between">
+                <div className="flex-1 w-full sm:max-w-sm">
                     <div className="relative">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                         <Input
                             placeholder="Search batches..."
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            className="pl-9"
+                            className="pl-9 h-11"
                         />
                     </div>
                 </div>
-                <Button asChild>
+                <Button asChild className="w-full sm:w-auto h-11">
                     <Link href="/teacher/batches/new">
                         <Plus className="h-4 w-4 mr-2" />
                         Create New Batch
@@ -104,8 +104,8 @@ export default function BatchesPage() {
                 </Button>
             </div>
 
-            {/* Stats Overview */}
-            <div className="grid gap-4 md:grid-cols-4 mb-6">
+            {/* Stats Overview - Responsive Grid */}
+            <div className="grid gap-3 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 mb-6 md:gap-4">
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium">Total Batches</CardTitle>
@@ -156,8 +156,8 @@ export default function BatchesPage() {
                 </Card>
             </div>
 
-            {/* Batch Grid */}
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {/* Batch Grid - Responsive: 1 → 2 → 3 columns */}
+            <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 md:gap-6">
                 {filteredBatches.map((batch) => (
                     <Card key={batch.id} className="hover:shadow-lg transition-shadow">
                         <CardHeader>
@@ -210,12 +210,12 @@ export default function BatchesPage() {
 
                             {/* Actions */}
                             <div className="flex gap-2 pt-2">
-                                <Button asChild className="flex-1" size="sm">
+                                <Button asChild className="flex-1 h-10" size="sm">
                                     <Link href={`/teacher/batches/${batch.id}`}>
                                         View Details
                                     </Link>
                                 </Button>
-                                <Button asChild variant="outline" size="sm">
+                                <Button asChild variant="outline" className="h-10" size="sm">
                                     <Link href={`/teacher/batches/${batch.id}/edit`}>
                                         Edit
                                     </Link>

@@ -50,8 +50,8 @@ export default function AssignmentsPage() {
             title="Assignments"
             subtitle="Manage assignments and track student submissions"
         >
-            {/* Stats Cards */}
-            <div className="grid gap-4 md:grid-cols-4 mb-6">
+            {/* Stats Cards - Responsive Grid */}
+            <div className="grid gap-3 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 mb-6 md:gap-4">
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium">Total Assignments</CardTitle>
@@ -105,8 +105,8 @@ export default function AssignmentsPage() {
                 </Card>
             </div>
 
-            {/* Filters and Actions */}
-            <div className="flex flex-col sm:flex-row gap-4 mb-6">
+            {/* Filters and Actions - Mobile Responsive */}
+            <div className="flex flex-col gap-3 mb-6">
                 {/* Search */}
                 <div className="relative flex-1">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -114,17 +114,17 @@ export default function AssignmentsPage() {
                         placeholder="Search assignments..."
                         value={filters.search || ''}
                         onChange={(e) => setFilters({ search: e.target.value })}
-                        className="pl-9"
+                        className="pl-9 h-11"
                     />
                 </div>
 
-                {/* Filters */}
-                <div className="flex gap-2">
+                {/* Filters Row - Wrap on mobile */}
+                <div className="flex flex-wrap gap-2">
                     <Select
                         value={filters.status || 'all'}
                         onValueChange={(value) => setFilters({ status: value as any })}
                     >
-                        <SelectTrigger className="w-[140px]">
+                        <SelectTrigger className="w-full sm:w-[140px] h-11">
                             <SelectValue placeholder="Status" />
                         </SelectTrigger>
                         <SelectContent>
@@ -139,7 +139,7 @@ export default function AssignmentsPage() {
                         value={filters.type || 'all'}
                         onValueChange={(value) => setFilters({ type: value as any })}
                     >
-                        <SelectTrigger className="w-[140px]">
+                        <SelectTrigger className="w-full sm:w-[140px] h-11">
                             <SelectValue placeholder="Type" />
                         </SelectTrigger>
                         <SelectContent>
@@ -155,7 +155,7 @@ export default function AssignmentsPage() {
                         value={filters.dueDate || 'all'}
                         onValueChange={(value) => setFilters({ dueDate: value as any })}
                     >
-                        <SelectTrigger className="w-[140px]">
+                        <SelectTrigger className="w-full sm:w-[140px] h-11">
                             <SelectValue placeholder="Due Date" />
                         </SelectTrigger>
                         <SelectContent>
@@ -164,33 +164,33 @@ export default function AssignmentsPage() {
                             <SelectItem value="overdue">Overdue</SelectItem>
                         </SelectContent>
                     </Select>
-                </div>
 
-                {/* View Mode Toggle */}
-                <div className="flex gap-1 border rounded-md p-1">
-                    <Button
-                        variant={viewMode === 'grid' ? 'default' : 'ghost'}
-                        size="sm"
-                        onClick={() => setViewMode('grid')}
-                    >
-                        <Grid3x3 className="h-4 w-4" />
-                    </Button>
-                    <Button
-                        variant={viewMode === 'list' ? 'default' : 'ghost'}
-                        size="sm"
-                        onClick={() => setViewMode('list')}
-                    >
-                        <List className="h-4 w-4" />
-                    </Button>
-                </div>
+                    {/* View Mode Toggle - Desktop only */}
+                    <div className="hidden sm:flex gap-1 border rounded-md p-1">
+                        <Button
+                            variant={viewMode === 'grid' ? 'default' : 'ghost'}
+                            size="sm"
+                            onClick={() => setViewMode('grid')}
+                        >
+                            <Grid3x3 className="h-4 w-4" />
+                        </Button>
+                        <Button
+                            variant={viewMode === 'list' ? 'default' : 'ghost'}
+                            size="sm"
+                            onClick={() => setViewMode('list')}
+                        >
+                            <List className="h-4 w-4" />
+                        </Button>
+                    </div>
 
-                {/* Create Button */}
-                <Link href="/teacher/assignments/new">
-                    <Button>
-                        <Plus className="h-4 w-4 mr-2" />
-                        Create Assignment
-                    </Button>
-                </Link>
+                    {/* Create Button */}
+                    <Link href="/teacher/assignments/new" className="flex-1 sm:flex-none">
+                        <Button className="w-full h-11">
+                            <Plus className="h-4 w-4 mr-2" />
+                            Create Assignment
+                        </Button>
+                    </Link>
+                </div>
             </div>
 
             {/* Assignments List/Grid */}
@@ -214,7 +214,7 @@ export default function AssignmentsPage() {
                 <div
                     className={
                         viewMode === 'grid'
-                            ? 'grid gap-4 md:grid-cols-2 lg:grid-cols-3'
+                            ? 'grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3'
                             : 'space-y-4'
                     }
                 >

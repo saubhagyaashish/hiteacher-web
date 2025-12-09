@@ -118,6 +118,7 @@ export default function NewContentPage() {
                                         id="title"
                                         {...register('title')}
                                         placeholder="e.g., Introduction to Algebra"
+                                        className="h-11"
                                     />
                                     {errors.title && (
                                         <p className="text-sm text-destructive">{errors.title.message}</p>
@@ -138,7 +139,7 @@ export default function NewContentPage() {
                                     )}
                                 </div>
 
-                                <div className="grid gap-4 md:grid-cols-2">
+                                <div className="grid gap-4 grid-cols-1 md:grid-cols-2">
                                     {/* Type */}
                                     <div className="space-y-2">
                                         <Label>Content Type *</Label>
@@ -146,7 +147,7 @@ export default function NewContentPage() {
                                             value={contentType}
                                             onValueChange={(value: any) => setValue('type', value)}
                                         >
-                                            <SelectTrigger>
+                                            <SelectTrigger className="h-11">
                                                 <SelectValue />
                                             </SelectTrigger>
                                             <SelectContent>
@@ -167,7 +168,7 @@ export default function NewContentPage() {
                                         <Select
                                             onValueChange={(value) => setValue('category', value)}
                                         >
-                                            <SelectTrigger>
+                                            <SelectTrigger className="h-11">
                                                 <SelectValue placeholder="Select category" />
                                             </SelectTrigger>
                                             <SelectContent>
@@ -188,6 +189,7 @@ export default function NewContentPage() {
                                     <Input
                                         id="tags"
                                         placeholder="beginner, notes, practice"
+                                        className="h-11"
                                         onChange={(e) => {
                                             const tags = e.target.value.split(',').map(t => t.trim()).filter(Boolean)
                                             setValue('tags', tags)
@@ -256,7 +258,7 @@ export default function NewContentPage() {
                                         defaultValue="draft"
                                         onValueChange={(value: any) => setValue('status', value)}
                                     >
-                                        <SelectTrigger>
+                                        <SelectTrigger className="h-11">
                                             <SelectValue />
                                         </SelectTrigger>
                                         <SelectContent>
@@ -349,21 +351,23 @@ export default function NewContentPage() {
                     </TabsContent>
                 </Tabs>
 
-                {/* Action Buttons */}
-                <div className="flex items-center justify-between pt-6 border-t">
+                {/* Action Buttons - Mobile Responsive */}
+                <div className="flex flex-col gap-3 pt-6 border-t sm:flex-row sm:items-center sm:justify-between">
                     <Button
                         type="button"
                         variant="outline"
                         onClick={() => router.back()}
+                        className="w-full sm:w-auto h-11"
                     >
                         Cancel
                     </Button>
-                    <div className="flex gap-2">
+                    <div className="flex flex-col gap-2 sm:flex-row">
                         <Button
                             type="submit"
                             variant="outline"
                             disabled={isSubmitting}
                             onClick={() => setValue('status', 'draft')}
+                            className="w-full sm:w-auto h-11"
                         >
                             <Save className="h-4 w-4 mr-2" />
                             Save as Draft
@@ -372,6 +376,7 @@ export default function NewContentPage() {
                             type="submit"
                             disabled={isSubmitting}
                             onClick={() => setValue('status', 'published')}
+                            className="w-full sm:w-auto h-11"
                         >
                             <Send className="h-4 w-4 mr-2" />
                             Publish Now

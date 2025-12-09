@@ -68,8 +68,8 @@ export default function AdminDashboard() {
 
     return (
         <DashboardLayout role="admin" title="Admin Dashboard" subtitle="Platform Overview & Management">
-            {/* Stats Grid */}
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4 mb-8">
+            {/* Stats Grid - Mobile First: 1 col → 2 cols → 4 cols */}
+            <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 mb-6 md:mb-8">
                 <StatCard
                     title="Total Users"
                     value="2,543"
@@ -102,7 +102,8 @@ export default function AdminDashboard() {
                 />
             </div>
 
-            <div className="grid gap-6 lg:grid-cols-2 mb-8">
+            {/* Widgets Grid - Mobile: stack, Tablet+: 2 cols */}
+            <div className="grid gap-4 grid-cols-1 lg:grid-cols-2 mb-6 md:gap-6 md:mb-8">
                 {/* Pending Approvals */}
                 <Card>
                     <CardHeader>
@@ -175,12 +176,12 @@ export default function AdminDashboard() {
 
             {/* System Stats */}
             <Card>
-                <CardHeader>
-                    <CardTitle>System Statistics</CardTitle>
-                    <CardDescription>Platform performance and engagement metrics</CardDescription>
+                <CardHeader className="p-4 md:p-6">
+                    <CardTitle className="text-base md:text-lg">System Statistics</CardTitle>
+                    <CardDescription className="text-xs md:text-sm">Platform performance and engagement metrics</CardDescription>
                 </CardHeader>
-                <CardContent>
-                    <div className="grid gap-4 md:grid-cols-4">
+                <CardContent className="p-4 pt-0 md:p-6 md:pt-0">
+                    <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
                         <div className="space-y-2">
                             <p className="text-sm font-medium text-muted-foreground">Daily Active Users</p>
                             <p className="text-2xl font-bold">1,234</p>

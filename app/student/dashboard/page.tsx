@@ -76,8 +76,8 @@ export default function StudentDashboard() {
 
     return (
         <DashboardLayout role="student" title="Student Dashboard" subtitle={`Welcome, ${user.name}!`}>
-            {/* Stats Grid */}
-            <div className="grid gap-6 md:grid-cols-3 mb-8">
+            {/* Stats Grid - Mobile First: 1 col → 2 cols → 3 cols */}
+            <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 mb-6 md:mb-8">
                 <StatCard
                     title="My Courses"
                     value="2"
@@ -102,7 +102,8 @@ export default function StudentDashboard() {
                 />
             </div>
 
-            <div className="grid gap-6 lg:grid-cols-2 mb-8">
+            {/* Widgets Grid - Mobile: stack, Tablet+: 2 cols */}
+            <div className="grid gap-4 grid-cols-1 lg:grid-cols-2 mb-6 md:gap-6 md:mb-8">
                 {/* Today's Schedule */}
                 <ScheduleWidget
                     classes={upcomingClasses}
@@ -113,14 +114,14 @@ export default function StudentDashboard() {
 
                 {/* Upcoming Assignments */}
                 <Card>
-                    <CardHeader>
+                    <CardHeader className="p-4 md:p-6">
                         <div className="flex items-center justify-between">
-                            <CardTitle>Upcoming Assignments</CardTitle>
+                            <CardTitle className="text-base md:text-lg">Upcoming Assignments</CardTitle>
                             <Badge variant="destructive">1 urgent</Badge>
                         </div>
-                        <CardDescription>Pending assignments and quizzes</CardDescription>
+                        <CardDescription className="text-xs md:text-sm">Pending assignments and quizzes</CardDescription>
                     </CardHeader>
-                    <CardContent>
+                    <CardContent className="p-4 pt-0 md:p-6 md:pt-0">
                         <div className="space-y-4">
                             {upcomingAssignments.map((assignment) => (
                                 <div key={assignment.id} className="flex items-start gap-3">
@@ -132,7 +133,7 @@ export default function StudentDashboard() {
                                             {assignment.dueDate}
                                         </p>
                                     </div>
-                                    <Button size="sm" variant={assignment.status === 'in-progress' ? 'default' : 'outline'}>
+                                    <Button size="sm" variant={assignment.status === 'in-progress' ? 'default' : 'outline'} className="shrink-0 h-9 min-w-[70px]">
                                         {assignment.status === 'in-progress' ? 'Continue' : 'Start'}
                                     </Button>
                                 </div>
@@ -146,13 +147,13 @@ export default function StudentDashboard() {
             </div>
 
             {/* Course Progress */}
-            <Card className="mb-8">
-                <CardHeader>
-                    <CardTitle>Course Progress</CardTitle>
-                    <CardDescription>Your learning journey across enrolled courses</CardDescription>
+            <Card className="mb-6 md:mb-8">
+                <CardHeader className="p-4 md:p-6">
+                    <CardTitle className="text-base md:text-lg">Course Progress</CardTitle>
+                    <CardDescription className="text-xs md:text-sm">Your learning journey across enrolled courses</CardDescription>
                 </CardHeader>
-                <CardContent>
-                    <div className="grid gap-4 md:grid-cols-2">
+                <CardContent className="p-4 pt-0 md:p-6 md:pt-0">
+                    <div className="grid gap-4 grid-cols-1 md:grid-cols-2">
                         <div className="space-y-3 p-4 rounded-lg border">
                             <div className="flex items-center justify-between">
                                 <div>

@@ -88,6 +88,7 @@ export default function NewBatchPage() {
                                 <Input
                                     id="name"
                                     placeholder="e.g., Advanced Mathematics - Batch A"
+                                    className="h-11"
                                     {...register('name')}
                                 />
                                 {errors.name && (
@@ -104,8 +105,8 @@ export default function NewBatchPage() {
                                             type="button"
                                             onClick={() => setValue('subject', subj)}
                                             className={`p-2 text-sm rounded-md border transition-colors ${subject === subj
-                                                    ? 'bg-primary text-primary-foreground border-primary'
-                                                    : 'bg-background hover:bg-muted border-input'
+                                                ? 'bg-primary text-primary-foreground border-primary'
+                                                : 'bg-background hover:bg-muted border-input'
                                                 }`}
                                         >
                                             {subj}
@@ -140,15 +141,15 @@ export default function NewBatchPage() {
                         <CardContent className="space-y-4">
                             <div className="space-y-2">
                                 <Label>Class Days *</Label>
-                                <div className="grid grid-cols-7 gap-2">
+                                <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-7 gap-2">
                                     {DAYS.map((day) => (
                                         <button
                                             key={day}
                                             type="button"
                                             onClick={() => toggleDay(day)}
                                             className={`p-2 text-xs rounded-md border transition-colors ${selectedDays.includes(day)
-                                                    ? 'bg-secondary text-secondary-foreground border-secondary'
-                                                    : 'bg-background hover:bg-muted border-input'
+                                                ? 'bg-secondary text-secondary-foreground border-secondary'
+                                                : 'bg-background hover:bg-muted border-input'
                                                 }`}
                                         >
                                             {day.slice(0, 3)}
@@ -162,12 +163,13 @@ export default function NewBatchPage() {
                                 )}
                             </div>
 
-                            <div className="grid grid-cols-2 gap-4">
+                            <div className="grid gap-4 grid-cols-1 sm:grid-cols-2">
                                 <div className="space-y-2">
                                     <Label htmlFor="startTime">Start Time *</Label>
                                     <Input
                                         id="startTime"
                                         type="time"
+                                        className="h-11"
                                         {...register('schedule.startTime')}
                                     />
                                     {errors.schedule?.startTime && (
@@ -179,6 +181,7 @@ export default function NewBatchPage() {
                                     <Input
                                         id="endTime"
                                         type="time"
+                                        className="h-11"
                                         {...register('schedule.endTime')}
                                     />
                                     {errors.schedule?.endTime && (
@@ -203,6 +206,7 @@ export default function NewBatchPage() {
                                     type="number"
                                     min="1"
                                     max="100"
+                                    className="h-11"
                                     {...register('maxStudents', { valueAsNumber: true })}
                                 />
                                 {errors.maxStudents && (
@@ -219,8 +223,8 @@ export default function NewBatchPage() {
                                             type="button"
                                             onClick={() => setValue('accessType', type as any)}
                                             className={`p-3 text-sm rounded-md border transition-colors ${watch('accessType') === type
-                                                    ? 'bg-accent text-accent-foreground border-accent'
-                                                    : 'bg-background hover:bg-muted border-input'
+                                                ? 'bg-accent text-accent-foreground border-accent'
+                                                : 'bg-background hover:bg-muted border-input'
                                                 }`}
                                         >
                                             <div className="font-medium capitalize">{type.replace('-', ' ')}</div>
@@ -237,17 +241,17 @@ export default function NewBatchPage() {
                     </Card>
 
                     {/* Actions */}
-                    <div className="flex gap-4">
+                    <div className="flex flex-col gap-3 sm:flex-row sm:justify-end pt-4">
                         <Button
                             type="button"
                             variant="outline"
                             onClick={() => router.back()}
                             disabled={isLoading}
-                            className="flex-1"
+                            className="w-full sm:w-auto h-11"
                         >
                             Cancel
                         </Button>
-                        <Button type="submit" disabled={isLoading} className="flex-1">
+                        <Button type="submit" disabled={isLoading} className="w-full sm:w-auto h-11">
                             {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                             Create Batch
                         </Button>
